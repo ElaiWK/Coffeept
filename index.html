@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Interativo do Café Português</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-fundo: #f4f1ed;
+            --cor-texto: #3d2b24;
+            --cor-primaria: #5a3a2a;
+            --cor-secundaria: #a38560;
+            --cor-destaque: #ffffff;
+            --cor-borda: #e0d8d1;
+            --sombra-caixa: 0 5px 20px rgba(0, 0, 0, 0.07);
+            --borda-radius: 16px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { color: var(--cor-primaria); font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 10px 0; font-weight: 700; }
+        header p { font-size: clamp(0.9rem, 2vw, 1.1rem); color: #7a5c5a; max-width: 650px; margin: 0 auto; }
+
+        .lang-switcher-container {
+            margin: 25px 0 40px 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .lang-toggle { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+        .lang-toggle .lang-label { font-weight: 600; font-size: 1.1em; transition: color 0.2s; }
+        .lang-toggle .lang-label.inactive { color: #aaa; }
+        .lang-toggle .lang-label.active { color: var(--cor-secundaria); }
+        .lang-toggle input { display: none; }
+        .lang-toggle .slider { position: relative; width: 50px; height: 26px; background-color: var(--cor-secundaria); border-radius: 26px; transition: background-color 0.2s; }
+        .lang-toggle .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.2s; }
+        .lang-toggle input:checked + .slider:before { transform: translateX(24px); }
+
+        .cartoes-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; }
+        .cartao-cafe { background-color: var(--cor-destaque); border-radius: var(--borda-radius); box-shadow: var(--sombra-caixa); padding: 25px; display: flex; flex-direction: column; }
+        .cartao-header { display: flex; align-items: flex-start; gap: 15px; padding-bottom: 15px; }
+        .cartao-info { flex-grow: 1; }
+        .cartao-info h3 { margin: 0; color: var(--cor-primaria); font-size: 1.4em; font-weight: 600; line-height: 1.3; }
+        .english-subtitle { font-size: 0.9em; font-style: italic; color: #777; margin-top: 2px; }
+        .descricao-base { font-size: 0.95em; margin-top: 8px; color: #666; }
+
+        .volume-display { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .volume-bar-container { width: 24px; height: 80px; background-color: #f0ebe8; border-radius: 6px; position: relative; overflow: hidden; border: 1px solid var(--cor-borda); }
+        .volume-bar-fill { position: absolute; bottom: 0; width: 100%; background-color: var(--cor-secundaria); transition: height 0.4s ease-out; }
+        .volume-texto { font-size: 0.8em; font-weight: 600; color: var(--cor-primaria); }
+
+        .composicao-barra { display: flex; height: 20px; border-radius: 5px; overflow: hidden; margin: 0 0 15px 0; background-color: #eee; border: 1px solid #e0e0e0; }
+        .composicao-barra span { display: flex; align-items: center; justify-content: center; font-size: 0.7em; color: white; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); transition: width 0.3s ease; }
+        .comp-cafe { background-color: #6f4e37; }
+        .comp-leite { background-color: #dcd3c4; color: #5e4a42!important; text-shadow: none!important; }
+        .comp-agua { background-color: #aaccff; color: #0056b3!important; text-shadow: none!important; }
+        .comp-alcool { background-color: #d2691e; }
+        .comp-gelo { background-color: #e0ffff; color: #008b8b!important; text-shadow: none!important; }
+
+        .modificadores-container { border-top: 1px solid var(--cor-borda); padding-top: 20px; }
+        .grupo-modificador { margin-bottom: 20px; }
+        .grupo-modificador legend { font-weight: 600; font-size: 1em; margin-bottom: 12px; color: var(--cor-primaria); }
+        .modificador-botoes { display: flex; flex-wrap: wrap; gap: 8px; }
+        .modificador-botoes label { display: block; }
+        .modificador-botoes input { position: absolute; opacity: 0; }
+        .modificador-botoes span { display: block; padding: 8px 14px; border: 1px solid var(--cor-borda); border-radius: 20px; cursor: pointer; font-size: 0.9em; transition: all 0.2s ease; user-select: none; }
+        .modificador-botoes input:checked + span { background-color: var(--cor-primaria); color: var(--cor-destaque); border-color: var(--cor-primaria); font-weight: 500; }
+        
+        .toggle-switch { display: flex; align-items: center; gap: 10px; }
+        .toggle-switch input { position: absolute; opacity: 0;}
+        .toggle-switch .label-text { font-size: 0.9em; cursor: pointer; }
+        .toggle-switch .slider { cursor: pointer; width: 42px; height: 24px; background-color: #ccc; border-radius: 24px; position: relative; transition: background-color 0.2s; }
+        .toggle-switch .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.2s; }
+        .toggle-switch input:checked + .slider { background-color: var(--cor-secundaria); }
+        .toggle-switch input:checked + .slider:before { transform: translateX(18px); }
+
+        .segmented-control { display: flex; border: 1px solid var(--cor-borda); border-radius: 10px; overflow: hidden; }
+        .segmented-control label { flex: 1; text-align: center; }
+        .segmented-control input { position: absolute; opacity: 0; }
+        .segmented-control span { padding: 8px; cursor: pointer; user-select: none; transition: background-color 0.2s; font-size: 0.85em; }
+        .segmented-control input:checked + span { background-color: var(--cor-secundaria); color: white; font-weight: 500; }
+
+        .resultado-pedido { margin-top: auto; padding: 20px; background-color: #fdfaf6; border-radius: var(--borda-radius); border: 1px solid var(--cor-borda); text-align: center; }
+        .resultado-pedido .como-pedir-label { font-weight: 600; font-size: 1.1em; color: var(--cor-primaria); }
+        .resultado-pedido .como-pedir-phrase { display: block; margin-top: 8px; font-style: italic; font-family: monospace; background-color: #fff8e1; padding: 8px 12px; border-radius: 8px; word-wrap: break-word; }
+        .resultado-pedido .como-pedir-translation { font-size: 0.8em; font-style: italic; color: #777; margin-top: 5px; }
+
+        #back-to-top-btn { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 99; border: none; outline: none; background-color: var(--cor-secundaria); color: white; cursor: pointer; padding: 12px; border-radius: 50%; width: 48px; height: 48px; font-size: 20px; line-height: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: opacity 0.3s, visibility 0.3s; }
+        #back-to-top-btn:hover { background-color: var(--cor-primaria); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 data-lang-key="main_title"></h1>
+            <p data-lang-key="main_subtitle"></p>
+            <div class="lang-switcher-container">
+                <label class="lang-toggle">
+                    <span class="lang-label lang-label-pt">PT</span>
+                    <input type="checkbox" id="lang-toggle-checkbox">
+                    <span class="slider"></span>
+                    <span class="lang-label lang-label-en">EN</span>
+                </label>
+            </div>
+        </header>
+        <main id="guia-cafe-container" class="cartoes-container"></main>
+    </div>
+    <button id="back-to-top-btn" title="Voltar ao topo">&#8679;</button>
+
+    <script>
+    const uiStrings = {
+        "main_title": { "pt": "Guia Interativo do Café Português", "en": "The Interactive Guide to Portuguese Coffee" },
+        "main_subtitle": { "pt": "Combine as opções, descubra as inúmeras variações e saiba exatamente como pedir o seu café perfeito.", "en": "Combine the options, discover the endless variations, and learn exactly how to order your perfect coffee." },
+        "how_to_ask": { "pt": "Como pedir:", "en": "How to ask:" },
+        "translation_means": { "pt": "", "en": "Which means:" },
+        "composition_labels": {
+            "pt": { "cafe": "Café", "leite": "Leite", "agua": "Água", "alcool": "Álcool", "gelo": "Gelo" },
+            "en": { "cafe": "Coffee", "leite": "Milk", "agua": "Water", "alcool": "Alcohol", "gelo": "Ice" }
+        }
+    };
+    
+    const coffeeData = {
+      "tipos_cafe": [
+        { "id": "cafe", "nome_base": "Café", "en_name": "Espresso", "descricao_base": { "pt": "A dose padrão de expresso...", "en": "The standard espresso shot..." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "curto", "nome_a_pedir": "curto", "nome_dinamico": "Café Curto / Italiana", "en_translation": "short" }, { "id": "cheio", "nome_a_pedir": "cheio", "nome_dinamico": "Café Cheio", "modifica_ml": 20, "en_translation": "full cup" } ] }, { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+        { "id": "pingado", "nome_base": "Pingado", "en_name": "Espresso with a drop of milk", "descricao_base": { "pt": "Um café expresso com apenas umas gotas de leite...", "en": "An espresso with just a few drops of milk..." }, "quantidade_ml_base": 35, "composicao": { "cafe": 85, "leite": 15 }, "modificadores": [ { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+        { "id": "meia-leite", "nome_base": "Meia de Leite", "en_name": "Latte / Flat White", "descricao_base": { "pt": "Partes iguais de café e leite...", "en": "Equal parts coffee and milk..." }, "quantidade_ml_base": 180, "composicao": { "cafe": 50, "leite": 50 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escura", "nome_a_pedir": "escura", "nome_dinamico": "Meia de Leite Escura", "en_translation": "dark" }, { "id": "clara", "nome_a_pedir": "clara", "nome_dinamico": "Meia de Leite Clara", "en_translation": "light" } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_genero", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinada", "nome_a_pedir": "descafeinada", "label": { "pt": "Descafeinada", "en": "Decaf" }, "en_translation": "decaf" } ] } ] }
+      ]
+    };
+    
+    // For brevity, the other coffee objects are omitted, but they follow the same structure.
+    
+    let currentLanguage = 'pt';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const langToggle = document.getElementById('lang-toggle-checkbox');
+        const topButton = document.getElementById('back-to-top-btn');
+
+        langToggle.addEventListener('change', toggleLanguage);
+        topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        window.onscroll = () => {
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                topButton.style.display = "block";
+            } else {
+                topButton.style.display = "none";
+            }
+        };
+        
+        renderAllCards();
+    });
+    
+    function getText(key) {
+        return uiStrings[key][currentLanguage];
+    }
+
+    function toggleLanguage() {
+        const isEnglish = document.getElementById('lang-toggle-checkbox').checked;
+        currentLanguage = isEnglish ? 'en' : 'pt';
+        renderAllCards();
+    }
+    
+    function updateStaticText() {
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            el.textContent = getText(el.dataset.langKey);
+        });
+        const langToggle = document.querySelector('.lang-toggle');
+        langToggle.querySelector('.lang-label-pt').classList.toggle('active', currentLanguage === 'pt');
+        langToggle.querySelector('.lang-label-pt').classList.toggle('inactive', currentLanguage !== 'pt');
+        langToggle.querySelector('.lang-label-en').classList.toggle('active', currentLanguage === 'en');
+        langToggle.querySelector('.lang-label-en').classList.toggle('inactive', currentLanguage !== 'en');
+        document.getElementById('lang-toggle-checkbox').checked = (currentLanguage === 'en');
+    }
+    
+    function renderAllCards() {
+        const container = document.getElementById('guia-cafe-container');
+        container.innerHTML = '';
+        const fullCoffeeData = [
+             { "id": "cafe", "nome_base": "Café", "en_name": "Espresso", "descricao_base": { "pt": "A dose padrão de expresso, o pilar da cultura de café portuguesa.", "en": "The standard espresso shot, a pillar of Portuguese coffee culture." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "curto", "nome_a_pedir": "curto", "nome_dinamico": "Café Curto / Italiana", "en_translation": "short" }, { "id": "cheio", "nome_a_pedir": "cheio", "nome_dinamico": "Café Cheio", "modifica_ml": 20, "en_translation": "full cup" } ] }, { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "pingado", "nome_base": "Pingado", "en_name": "Espresso with a drop of milk", "descricao_base": { "pt": "Um café expresso com apenas umas gotas de leite para cortar a acidez.", "en": "An espresso with just a few drops of milk to cut the acidity." }, "quantidade_ml_base": 35, "composicao": { "cafe": 85, "leite": 15 }, "modificadores": [ { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "garoto", "nome_base": "Garoto", "en_name": "Small coffee with milk", "descricao_base": { "pt": "Um café expresso com mais leite, resultando numa bebida mais suave.", "en": "An espresso with more milk, resulting in a smoother drink." }, "quantidade_ml_base": 50, "composicao": { "cafe": 60, "leite": 40 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escuro", "nome_a_pedir": "escuro", "nome_dinamico": "Garoto Escuro", "en_translation": "dark" }, { "id": "claro", "nome_a_pedir": "claro", "nome_dinamico": "Garoto Claro", "en_translation": "light" } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "duplo", "nome_base": "Café Duplo", "en_name": "Double Espresso", "descricao_base": { "pt": "Dois expressos numa chávena grande...", "en": "Two espresso shots in a large cup..." }, "quantidade_ml_base": 60, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "abatanado", "nome_base": "Abatanado", "en_name": "Americano", "descricao_base": { "pt": "Um expresso diluído com água quente...", "en": "An espresso diluted with hot water..." }, "quantidade_ml_base": 150, "composicao": { "cafe": 30, "agua": 70 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "cheio", "nome_a_pedir": "cheio", "nome_dinamico": "Abatanado Cheio", "en_translation": "full cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "meia-leite", "nome_base": "Meia de Leite", "en_name": "Latte / Flat White", "descricao_base": { "pt": "Partes iguais de café e leite...", "en": "Equal parts coffee and milk..." }, "quantidade_ml_base": 180, "composicao": { "cafe": 50, "leite": 50 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escura", "nome_a_pedir": "escura", "nome_dinamico": "Meia de Leite Escura", "en_translation": "dark" }, { "id": "clara", "nome_a_pedir": "clara", "nome_dinamico": "Meia de Leite Clara", "en_translation": "light" } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_genero", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinada", "nome_a_pedir": "descafeinada", "label": { "pt": "Descafeinada", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "galao", "nome_base": "Galão", "en_name": "Tall Latte in a Glass", "descricao_base": { "pt": "Servido em copo de vidro alto...", "en": "Served in a tall glass..." }, "quantidade_ml_base": 250, "composicao": { "cafe": 25, "leite": 75 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escuro", "nome_a_pedir": "escuro", "nome_dinamico": "Galão Escuro", "en_translation": "dark" }, { "id": "claro", "nome_a_pedir": "claro", "nome_dinamico": "Galão Claro", "en_translation": "light" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "cheirinho", "nome_base": "Café com Cheirinho", "en_name": "Espresso with Brandy", "descricao_base": { "pt": "Um café expresso com um toque de aguardente...", "en": "An espresso with a splash of local brandy..." }, "quantidade_ml_base": 40, "composicao": { "cafe": 80, "alcool": 20 }, "modificadores": [] },
+             { "id": "carioca", "nome_base": "Carioca de Café", "en_name": "Weak Espresso", "descricao_base": { "pt": "Um café fraco, extraído com borras já usadas.", "en": "A weak coffee, brewed from already used grounds." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] } ] },
+             { "id": "mazagran", "nome_base": "Mazagran", "en_name": "Iced Coffee with Lemon", "descricao_base": { "pt": "Bebida de café fria com gelo, açúcar e limão.", "en": "A cold coffee drink with ice, sugar, and lemon." }, "quantidade_ml_base": 200, "composicao": { "cafe": 40, "agua": 20, "gelo": 40 }, "modificadores": [] }
+        ];
+
+        fullCoffeeData.forEach(cafe => {
+            const cartao = document.createElement('article');
+            cartao.className = 'cartao-cafe';
+            cartao.dataset.cafeId = cafe.id;
+            cartao.innerHTML = generateCardHTML(cafe);
+            container.appendChild(cartao);
+            cartao.querySelectorAll('input').forEach(input => {
+                input.addEventListener('change', (e) => handleInteraction(e, cafe.id));
+            });
+            updateCard(cafe.id);
+        });
+        updateStaticText();
+    }
+
+    function generateCardHTML(cafe) {
+        const enSubtitle = currentLanguage === 'en' ? `<p class="english-subtitle">${cafe.en_name}</p>` : '';
+        const modificadoresHtml = cafe.modificadores.map(grupo => {
+            const legendText = grupo.legenda[currentLanguage];
+            let controlHtml;
+            switch (grupo.control_type) {
+                case 'exclusive-checkbox':
+                    controlHtml = `<div class="modificador-botoes">${grupo.modificadores.map(mod => `<label><input type="checkbox" name="${cafe.id}-${grupo.id}" value="${mod.id}"><span>${mod.nome_a_pedir}</span></label>`).join('')}</div>`;
+                    break;
+                case 'toggle':
+                    controlHtml = `<label class="toggle-switch"><span class="label-text">${grupo.modificadores[0].label[currentLanguage]}</span><input type="checkbox" name="${cafe.id}-${grupo.id}" value="${grupo.modificadores[0].id}"><span class="slider"></span></label>`;
+                    break;
+                case 'segmented':
+                    controlHtml = `<div class="segmented-control">${grupo.modificadores.map(mod => `<label><input type="radio" name="${cafe.id}-${grupo.id}" value="${mod.id}" ${mod.id === grupo.default ? 'checked' : ''}><span>${mod.label[currentLanguage]}</span></label>`).join('')}</div>`;
+                    break;
+            }
+            return `<div class="grupo-modificador"><legend>${legendText}</legend>${controlHtml}</div>`;
+        }).join('');
+
+        return `
+            <div class="cartao-header">
+                <div class="cartao-info">
+                    <h3>${cafe.nome_base}</h3>
+                    ${enSubtitle}
+                    <p class="descricao-base">${cafe.descricao_base[currentLanguage]}</p>
+                </div>
+                <div class="volume-display">
+                    <div class="volume-bar-container"><div class="volume-bar-fill"></div></div>
+                    <span class="volume-texto"></span>
+                </div>
+            </div>
+            <div class="composicao-container"></div>
+            ${cafe.modificadores.length > 0 ? `<div class="modificadores-container">${modificadoresHtml}</div>` : ''}
+            <div class="resultado-pedido">
+                <div class="como-pedir-label"></div>
+                <div class="como-pedir-phrase"><span></span></div>
+                <div class="como-pedir-translation"></div>
+            </div>
+        `;
+    }
+
+    function handleInteraction(event, cafeId) {
+        const input = event.target;
+        const cafe = coffeeData.tipos_cafe.find(c => c.id === cafeId) || fullCoffeeData.find(c => c.id === cafeId);
+        const grupo = cafe.modificadores.find(g => input.name.endsWith(g.id));
+        if (grupo && grupo.control_type === 'exclusive-checkbox' && input.checked) {
+            grupo.modificadores.forEach(mod => {
+                if (mod.id !== input.value) {
+                    const otherInput = document.querySelector(`input[name="${input.name}"][value="${mod.id}"]`);
+                    if (otherInput) otherInput.checked = false;
+                }
+            });
+        }
+        updateCard(cafeId);
+    }
+    
+    function getArticle(word) {
+        if (!word) return 'a';
+        const firstLetter = word.trim()[0].toLowerCase();
+        return ['a', 'e', 'i', 'o', 'u'].includes(firstLetter) ? 'an' : 'a';
+    }
+
+    function updateCard(cafeId) {
+        const fullCoffeeData = [
+             { "id": "cafe", "nome_base": "Café", "en_name": "Espresso", "descricao_base": { "pt": "A dose padrão de expresso...", "en": "The standard espresso shot..." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "curto", "nome_a_pedir": "curto", "nome_dinamico": "Café Curto / Italiana", "en_translation": "short" }, { "id": "cheio", "nome_a_pedir": "cheio", "nome_dinamico": "Café Cheio", "modifica_ml": 20, "en_translation": "full cup" } ] }, { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "pingado", "nome_base": "Pingado", "en_name": "Espresso with a drop of milk", "descricao_base": { "pt": "Um café expresso com apenas umas gotas de leite...", "en": "An espresso with just a few drops of milk..." }, "quantidade_ml_base": 35, "composicao": { "cafe": 85, "leite": 15 }, "modificadores": [ { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "garoto", "nome_base": "Garoto", "en_name": "Small coffee with milk", "descricao_base": { "pt": "Um café expresso com mais leite...", "en": "An espresso with more milk..." }, "quantidade_ml_base": 50, "composicao": { "cafe": 60, "leite": 40 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escuro", "nome_a_pedir": "escuro", "nome_dinamico": "Garoto Escuro", "en_translation": "dark" }, { "id": "claro", "nome_a_pedir": "claro", "nome_dinamico": "Garoto Claro", "en_translation": "light" } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "duplo", "nome_base": "Café Duplo", "en_name": "Double Espresso", "descricao_base": { "pt": "Dois expressos numa chávena grande...", "en": "Two espresso shots in a large cup..." }, "quantidade_ml_base": 60, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "abatanado", "nome_base": "Abatanado", "en_name": "Americano", "descricao_base": { "pt": "Um expresso diluído com água quente...", "en": "An espresso diluted with hot water..." }, "quantidade_ml_base": 150, "composicao": { "cafe": 30, "agua": 70 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "cheio", "nome_a_pedir": "cheio", "nome_dinamico": "Abatanado Cheio", "en_translation": "full cup" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "meia-leite", "nome_base": "Meia de Leite", "en_name": "Latte / Flat White", "descricao_base": { "pt": "Partes iguais de café e leite...", "en": "Equal parts coffee and milk..." }, "quantidade_ml_base": 180, "composicao": { "cafe": 50, "leite": 50 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escura", "nome_a_pedir": "escura", "nome_dinamico": "Meia de Leite Escura", "en_translation": "dark" }, { "id": "clara", "nome_a_pedir": "clara", "nome_dinamico": "Meia de Leite Clara", "en_translation": "light" } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] }, { "id": "descafeinado_genero", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinada", "nome_a_pedir": "descafeinada", "label": { "pt": "Descafeinada", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "galao", "nome_base": "Galão", "en_name": "Tall Latte in a Glass", "descricao_base": { "pt": "Servido em copo de vidro alto...", "en": "Served in a tall glass..." }, "quantidade_ml_base": 250, "composicao": { "cafe": 25, "leite": 75 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escuro", "nome_a_pedir": "escuro", "nome_dinamico": "Galão Escuro", "en_translation": "dark" }, { "id": "claro", "nome_a_pedir": "claro", "nome_dinamico": "Galão Claro", "en_translation": "light" } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": "decaf" } ] } ] },
+             { "id": "cheirinho", "nome_base": "Café com Cheirinho", "en_name": "Espresso with Brandy", "descricao_base": { "pt": "Um café expresso com um toque de aguardente...", "en": "An espresso with a splash of local brandy..." }, "quantidade_ml_base": 40, "composicao": { "cafe": 80, "alcool": 20 }, "modificadores": [] },
+             { "id": "carioca", "nome_base": "Carioca de Café", "en_name": "Weak Espresso", "descricao_base": { "pt": "Um café fraco, extraído com borras já usadas.", "en": "A weak coffee, brewed from already used grounds." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "temperatura", "legenda": { "pt": "Temperatura", "en": "Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": "in a cold cup" }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Heated", "en": "Heated" }, "en_translation": "in a heated cup" } ] } ] },
+             { "id": "mazagran", "nome_base": "Mazagran", "en_name": "Iced Coffee with Lemon", "descricao_base": { "pt": "Bebida de café fria com gelo, açúcar e limão.", "en": "A cold coffee drink with ice, sugar, and lemon." }, "quantidade_ml_base": 200, "composicao": { "cafe": 40, "agua": 20, "gelo": 40 }, "modificadores": [] }
+        ];
+
+        const cartao = document.querySelector(`.cartao-cafe[data-cafe-id="${cafeId}"]`);
+        const cafe = fullCoffeeData.find(c => c.id === cafeId);
+        if (!cartao || !cafe) return;
+        
+        const selectedModifierObjects = [];
+        cafe.modificadores.forEach(grupo => {
+            const inputs = cartao.querySelectorAll(`input[name="${cafe.id}-${grupo.id}"]:checked`);
+            inputs.forEach(input => {
+                const mod = grupo.modificadores.find(m => m.id === input.value);
+                if (mod) selectedModifierObjects.push(mod);
+            });
+        });
+        
+        const ordem = ['curto', 'cheio', 'escuro', 'escura', 'claro', 'clara', 'descafeinado', 'descafeinada', 'em chávena fria', 'em chávena escaldada'];
+        selectedModifierObjects.sort((a, b) => ordem.indexOf(a.nome_a_pedir) - ordem.indexOf(b.nome_a_pedir));
+        
+        const finalMl = cafe.quantidade_ml_base + selectedModifierObjects.reduce((acc, mod) => acc + (mod.modifica_ml || 0), 0);
+        const baseFeminina = cafe.id === 'meia-leite';
+        const pedidoBase = baseFeminina ? "Uma meia de leite" : `Um ${cafe.nome_base.toLowerCase()}`;
+        const pedidoModifiers = selectedModifierObjects.map(m => m.nome_a_pedir).filter(Boolean).join(' ');
+        const pedidoFinalString = `${pedidoBase} ${pedidoModifiers}`.trim();
+
+        const primaryMod = selectedModifierObjects.find(mod => mod.nome_dinamico);
+        let finalTitle = primaryMod ? primaryMod.nome_dinamico : cafe.nome_base;
+        const secondaryModifiersText = selectedModifierObjects.filter(mod => !mod.nome_dinamico && mod.nome_a_pedir).map(mod => mod.nome_a_pedir).join(' ');
+        if (secondaryModifiersText) finalTitle += ' ' + secondaryModifiersText;
+
+        cartao.querySelector(`h3`).textContent = finalTitle.trim();
+        cartao.querySelector('.como-pedir-phrase span').textContent = `"${pedidoFinalString}, se faz favor."`;
+
+        const translationEl = cartao.querySelector('.como-pedir-translation');
+        if (currentLanguage === 'en') {
+            const article = getArticle(cafe.en_name);
+            const englishModifiers = selectedModifierObjects.map(m => m.en_translation).filter(Boolean).join(' ');
+            const finalEnglish = `${article} ${cafe.en_name} ${englishModifiers}`.trim().replace(/\s+/g, ' ');
+            translationEl.textContent = `(${uiStrings.translation_means[currentLanguage]} "${finalEnglish}, please.")`;
+            translationEl.style.display = 'block';
+        } else {
+            translationEl.textContent = '';
+            translationEl.style.display = 'none';
+        }
+        
+        const maxMl = 280;
+        const alturaPercentagem = (finalMl / maxMl) * 100;
+        cartao.querySelector('.volume-bar-fill').style.height = `${Math.min(alturaPercentagem, 100)}%`;
+        cartao.querySelector('.volume-texto').textContent = `${finalMl}ml`;
+        
+        const composicaoContainer = cartao.querySelector('.composicao-container');
+        let barraHtml = '<div class="composicao-barra">';
+        const compLabels = uiStrings.composition_labels[currentLanguage];
+        if (cafe.composicao.cafe) barraHtml += `<span class="comp-cafe" style="width: ${cafe.composicao.cafe}%">${compLabels.cafe}</span>`;
+        if (cafe.composicao.leite) barraHtml += `<span class="comp-leite" style="width: ${cafe.composicao.leite}%">${compLabels.leite}</span>`;
+        if (cafe.composicao.agua) barraHtml += `<span class="comp-agua" style="width: ${cafe.composicao.agua}%">${compLabels.agua}</span>`;
+        if (cafe.composicao.alcool) barraHtml += `<span class="comp-alcool" style="width: ${cafe.composicao.alcool}%">${compLabels.alcool}</span>`;
+        if (cafe.composicao.gelo) barraHtml += `<span class="comp-gelo" style="width: ${cafe.composicao.gelo}%">${compLabels.gelo}</span>`;
+        barraHtml += '</div>';
+        composicaoContainer.innerHTML = barraHtml;
+    }
+    
+    function updateStaticText() {
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            el.textContent = getText(el.dataset.langKey);
+        });
+        const langToggle = document.querySelector('.lang-toggle');
+        langToggle.querySelector('.lang-label-pt').classList.toggle('active', currentLanguage === 'pt');
+        langToggle.querySelector('.lang-label-pt').classList.toggle('inactive', currentLanguage !== 'pt');
+        langToggle.querySelector('.lang-label-en').classList.toggle('active', currentLanguage === 'en');
+        langToggle.querySelector('.lang-label-en').classList.toggle('inactive', currentLanguage !== 'en');
+        document.getElementById('lang-toggle-checkbox').checked = (currentLanguage === 'en');
+    }
+    </script>
+</body>
+</html>
