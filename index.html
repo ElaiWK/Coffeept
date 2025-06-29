@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia Interativo do Café Português</title>
+    <title>Um Café Português</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,7 +35,13 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
         header { text-align: center; margin-bottom: 30px; }
-        header h1 { color: var(--cor-primaria); font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 10px 0; font-weight: 700; }
+        header h1 {
+            color: var(--cor-primaria);
+            font-size: clamp(2rem, 5vw, 3rem); /* Fonte responsiva */
+            margin: 0 0 10px 0;
+            font-weight: 700;
+            /* Regras que cortavam o texto foram removidas */
+        }
         header p { font-size: clamp(0.9rem, 2vw, 1.1rem); color: #7a5c5a; max-width: 650px; margin: 0 auto; }
 
         .lang-switcher-container {
@@ -127,7 +133,7 @@
 
     <script>
     const uiStrings = {
-        "main_title": { "pt": "Guia Interativo do Café Português", "en": "The Interactive Guide to Portuguese Coffee" },
+        "main_title": { "pt": "Um Café Português", "en": "A Portuguese Coffee" },
         "main_subtitle": { "pt": "Combine as opções, descubra as inúmeras variações e saiba exatamente como pedir o seu café perfeito.", "en": "Combine the options, discover the endless variations, and learn exactly how to order your perfect coffee." },
         "how_to_ask": { "pt": "Como pedir:", "en": "How to ask:" },
         "translation_means": { "pt": "", "en": "Which means:" },
@@ -137,7 +143,6 @@
         }
     };
     
-    // FINAL VERSION: Data structure now has correct and complete labels for all modifiers.
     const coffeeData = {
       "tipos_cafe": [
         { "id": "cafe", "nome_base": "Café", "en_name": "Espresso", "descricao_base": { "pt": "A dose padrão de expresso...", "en": "The standard espresso shot..." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "curto", "nome_a_pedir": "curto", "label": { "pt": "curto", "en": "short" }, "nome_dinamico": "Café Curto / Italiana", "modifica_ml": -10, "en_translation": { "text": "short", "type": "adjective" } }, { "id": "cheio", "nome_a_pedir": "cheio", "label": { "pt": "cheio", "en": "long" }, "nome_dinamico": "Café Cheio", "modifica_ml": 20, "en_translation": { "text": "long", "type": "adjective" } } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Chávena", "en": "Cup Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": { "text": "in a cold cup", "type": "phrase" } }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Escaldada", "en": "Heated" }, "en_translation": { "text": "in a heated cup", "type": "phrase" } } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
@@ -158,10 +163,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         const langToggle = document.getElementById('lang-toggle-checkbox');
         const topButton = document.getElementById('back-to-top-btn');
-
         langToggle.addEventListener('change', toggleLanguage);
         topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
         window.onscroll = () => {
             if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
                 topButton.style.display = "block";
@@ -169,12 +172,10 @@
                 topButton.style.display = "none";
             }
         };
-        
         renderAllCards();
     });
     
     function getText(key) { return uiStrings[key][currentLanguage]; }
-
     function toggleLanguage() {
         const isEnglish = document.getElementById('lang-toggle-checkbox').checked;
         currentLanguage = isEnglish ? 'en' : 'pt';
