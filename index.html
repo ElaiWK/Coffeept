@@ -3,11 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Um Café Português</title>
+    <title>Um Café Português - Portuguese Coffee Guide</title>
+    <meta name="description" content="Interactive guide to Portuguese coffee culture. Learn how to order authentic Portuguese coffee like a local.">
+    <meta name="keywords" content="Portuguese coffee, galão, café, pingado, Portugal, coffee culture">
+    <meta name="author" content="Portuguese Coffee Guide">
+    <meta name="theme-color" content="#5a3a2a">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUG9ydHVndWVzZSBDb2ZmZWUgR3VpZGUiLCJzaG9ydF9uYW1lIjoiQ2Fmw6kgUFQiLCJkZXNjcmlwdGlvbiI6IkludGVyYWN0aXZlIGd1aWRlIHRvIFBvcnR1Z3Vlc2UgY29mZmVlIGN1bHR1cmUiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y0ZjFlZCIsInRoZW1lX2NvbG9yIjoiIzVhM2EyYSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNjc3ZnJTIweG1sbnMlM2QnaHR0cCUzYS8vd3d3LnczLm9yZy8yMDAwL3N2ZyclMjAlMjB2aWV3Qm94JTNkJzAlMjAwJTIwMTAwJTIwMTAwJyUzZSUzY3RleHQlMjB5JTNkJy45ZW0nJTIwZm9udC1zaXplJTNkJzIwJyUzZSVmMCU5ZiU4ZCVhNSUzYy90ZXh0JTNlJTNjL3N2ZyUzZSIsInNpemVzIjoiMjR4MjQiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Café PT">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
         :root {
             --cor-fundo: #f4f1ed;
             --cor-texto: #3d2b24;
@@ -17,32 +27,145 @@
             --cor-borda: #e0d8d1;
             --sombra-caixa: 0 5px 20px rgba(0, 0, 0, 0.07);
             --borda-radius: 16px;
+            --gradient-primary: linear-gradient(135deg, #5a3a2a 0%, #7d4f37 100%);
+            --gradient-secondary: linear-gradient(135deg, #a38560 0%, #b8966d 100%);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-hover: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --shadow-active: 0 2px 10px rgba(0, 0, 0, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --backdrop-blur: blur(20px);
+            --gradient-hero: linear-gradient(135deg, rgba(90, 58, 42, 0.1) 0%, rgba(125, 79, 55, 0.05) 100%);
+        }
+        
+        [data-theme="dark"] {
+            --cor-fundo: #1a1511;
+            --cor-texto: #e8e0d8;
+            --cor-primaria: #d4a574;
+            --cor-secundaria: #8b6f47;
+            --cor-destaque: #2d251e;
+            --cor-borda: #3d332a;
+            --gradient-primary: linear-gradient(135deg, #d4a574 0%, #c4955f 100%);
+            --gradient-secondary: linear-gradient(135deg, #8b6f47 0%, #a08052 100%);
         }
 
         html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--cor-fundo);
+            background: var(--cor-fundo);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(163, 133, 96, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(90, 58, 42, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(212, 165, 116, 0.05) 0%, transparent 50%);
             color: var(--cor-texto);
             line-height: 1.6;
             margin: 0;
             padding: 20px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: var(--transition-smooth);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        .loading {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition-smooth);
+        }
+        
+        .loaded {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 {
-            color: var(--cor-primaria);
-            font-size: clamp(2rem, 5vw, 3rem); /* Fonte responsiva */
-            margin: 0 0 10px 0;
-            font-weight: 700;
-            /* Regras que cortavam o texto foram removidas */
+        header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+            position: relative;
         }
-        header p { font-size: clamp(0.9rem, 2vw, 1.1rem); color: #7a5c5a; max-width: 650px; margin: 0 auto; }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+        
+        header h1 {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin: 0 0 15px 0;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.1); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        header p { 
+            font-size: clamp(1rem, 2.5vw, 1.3rem); 
+            color: #7a5c5a; 
+            max-width: 750px; 
+            margin: 0 auto 20px auto;
+            font-weight: 400;
+            opacity: 0.9;
+        }
 
         .lang-switcher-container {
             margin: 25px 0 40px 0;
@@ -60,8 +183,106 @@
         .lang-toggle .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.2s; }
         .lang-toggle input:checked + .slider:before { transform: translateX(24px); }
 
-        .cartoes-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; }
-        .cartao-cafe { background-color: var(--cor-destaque); border-radius: var(--borda-radius); box-shadow: var(--sombra-caixa); padding: 25px; display: flex; flex-direction: column; }
+        .cartoes-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); 
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .search-filter-container {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--borda-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 20px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            font-size: 14px;
+            transition: var(--transition-smooth);
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--cor-secundaria);
+            box-shadow: 0 0 0 3px rgba(163, 133, 96, 0.1);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--cor-texto);
+            cursor: pointer;
+            font-size: 13px;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-btn:hover {
+            background: var(--cor-secundaria);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .filter-btn.active {
+            background: var(--cor-primaria);
+            color: white;
+            border-color: var(--cor-primaria);
+        }
+        .cartao-cafe { 
+            background: var(--glass-bg); 
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border); 
+            border-radius: var(--borda-radius); 
+            box-shadow: var(--sombra-caixa), 0 1px 0 0 rgba(255, 255, 255, 0.5) inset; 
+            padding: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+        .cartao-cafe::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+        .cartao-cafe:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover), 0 1px 0 0 rgba(255, 255, 255, 0.5) inset;
+        }
+        .cartao-cafe:hover::before {
+            opacity: 1;
+        }
         .cartao-header { display: flex; align-items: flex-start; gap: 15px; padding-bottom: 15px; }
         .cartao-info { flex-grow: 1; }
         .cartao-info h3 { margin: 0; color: var(--cor-primaria); font-size: 1.4em; font-weight: 600; line-height: 1.3; }
@@ -87,7 +308,7 @@
         .modificador-botoes { display: flex; flex-wrap: wrap; gap: 8px; }
         .modificador-botoes label { display: block; }
         .modificador-botoes input { position: absolute; opacity: 0; }
-        .modificador-botoes span { display: block; padding: 8px 14px; border: 1px solid var(--cor-borda); border-radius: 20px; cursor: pointer; font-size: 0.9em; transition: all 0.2s ease; user-select: none; }
+        .modificador-botoes span { display: block; padding: 8px 14px; border: 1px solid var(--cor-borda); border-radius: 20px; cursor: pointer; font-size: 0.9em; transition: all 0.2s ease; -webkit-user-select: none; user-select: none; }
         .modificador-botoes input:checked + span { background-color: var(--cor-primaria); color: var(--cor-destaque); border-color: var(--cor-primaria); font-weight: 500; }
         
         .toggle-switch { display: flex; align-items: center; gap: 10px; }
@@ -101,7 +322,7 @@
         .segmented-control { display: flex; border: 1px solid var(--cor-borda); border-radius: 10px; overflow: hidden; }
         .segmented-control label { flex: 1; text-align: center; }
         .segmented-control input { position: absolute; opacity: 0; }
-        .segmented-control span { padding: 8px; cursor: pointer; user-select: none; transition: background-color 0.2s; font-size: 0.85em; }
+        .segmented-control span { padding: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; transition: background-color 0.2s; font-size: 0.85em; }
         .segmented-control input:checked + span { background-color: var(--cor-secundaria); color: white; font-weight: 500; }
 
         .resultado-pedido { margin-top: auto; padding: 20px; background-color: #fdfaf6; border-radius: var(--borda-radius); border: 1px solid var(--cor-borda); text-align: center; }
@@ -109,8 +330,53 @@
         .resultado-pedido .como-pedir-phrase { display: block; margin-top: 8px; font-style: italic; font-family: monospace; background-color: #fff8e1; padding: 8px 12px; border-radius: 8px; word-wrap: break-word; }
         .resultado-pedido .como-pedir-translation { font-size: 0.8em; font-style: italic; color: #777; margin-top: 5px; }
 
-        #back-to-top-btn { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 99; border: none; outline: none; background-color: var(--cor-secundaria); color: white; cursor: pointer; padding: 12px; border-radius: 50%; width: 48px; height: 48px; font-size: 20px; line-height: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: opacity 0.3s, visibility 0.3s; }
-        #back-to-top-btn:hover { background-color: var(--cor-primaria); }
+        .floating-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+        .floating-nav.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .floating-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            outline: none;
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            color: var(--cor-primaria);
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .floating-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            background: var(--cor-primaria);
+            color: white;
+        }
+        .floating-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+        #back-to-top-btn { display: flex; }
+        #favorites-btn { display: flex; }
+        #random-coffee-btn { display: flex; }
     </style>
 </head>
 <body>
@@ -127,215 +393,44 @@
                 </label>
             </div>
         </header>
+        
+        <div class="search-filter-container">
+            <input type="text" class="search-input" id="coffee-search" data-lang-key="search_placeholder" placeholder="Search coffees...">
+            <div class="filter-buttons">
+                <button type="button" class="filter-btn active" data-filter="all">
+                    <i class="fas fa-coffee"></i>
+                    <span data-lang-key="filter_all">All</span>
+                </button>
+                <button type="button" class="filter-btn" data-filter="milk">
+                    <i class="fas fa-glass-whiskey"></i>
+                    <span data-lang-key="filter_milk">With Milk</span>
+                </button>
+                <button type="button" class="filter-btn" data-filter="strong">
+                    <i class="fas fa-bolt"></i>
+                    <span data-lang-key="filter_strong">Strong</span>
+                </button>
+                <button type="button" class="filter-btn" data-filter="favorites" id="favorites-filter">
+                    <i class="fas fa-heart"></i>
+                    <span data-lang-key="filter_favorites">Favorites</span>
+                </button>
+            </div>
+        </div>
+        
         <main id="guia-cafe-container" class="cartoes-container"></main>
     </div>
-    <button id="back-to-top-btn" title="Voltar ao topo">&#8679;</button>
-
-    <script>
-    const uiStrings = {
-        "main_title": { "pt": "Um Café Português", "en": "A Portuguese Coffee" },
-        "main_subtitle": { "pt": "Combine as opções, descubra as inúmeras variações e saiba exatamente como pedir o seu café perfeito.", "en": "Combine the options, discover the endless variations, and learn exactly how to order your perfect coffee." },
-        "how_to_ask": { "pt": "Como pedir:", "en": "How to ask:" },
-        "translation_means": { "pt": "", "en": "Which means:" },
-        "composition_labels": {
-            "pt": { "cafe": "Café", "leite": "Leite", "agua": "Água", "alcool": "Álcool", "gelo": "Gelo" },
-            "en": { "cafe": "Coffee", "leite": "Milk", "agua": "Water", "alcool": "Alcohol", "gelo": "Ice" }
-        }
-    };
     
-    const coffeeData = {
-      "tipos_cafe": [
-        { "id": "cafe", "nome_base": "Café", "en_name": "Espresso", "descricao_base": { "pt": "A dose padrão de expresso...", "en": "The standard espresso shot..." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "curto", "nome_a_pedir": "curto", "label": { "pt": "curto", "en": "short" }, "nome_dinamico": "Café Curto / Italiana", "modifica_ml": -10, "en_translation": { "text": "short", "type": "adjective" } }, { "id": "cheio", "nome_a_pedir": "cheio", "label": { "pt": "cheio", "en": "long" }, "nome_dinamico": "Café Cheio", "modifica_ml": 20, "en_translation": { "text": "long", "type": "adjective" } } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Chávena", "en": "Cup Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": { "text": "in a cold cup", "type": "phrase" } }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Escaldada", "en": "Heated" }, "en_translation": { "text": "in a heated cup", "type": "phrase" } } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
-        { "id": "pingado", "nome_base": "Pingado", "en_name": "Espresso with a drop of milk", "descricao_base": { "pt": "Um café expresso com apenas umas gotas de leite...", "en": "An espresso with just a few drops of milk..." }, "quantidade_ml_base": 35, "composicao": { "cafe": 85, "leite": 15 }, "modificadores": [ { "id": "temperatura_chavena", "legenda": { "pt": "Chávena", "en": "Cup Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": { "text": "in a cold cup", "type": "phrase" } }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Escaldada", "en": "Heated" }, "en_translation": { "text": "in a heated cup", "type": "phrase" } } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
-        { "id": "garoto", "nome_base": "Garoto", "en_name": "small coffee with milk", "descricao_base": { "pt": "Um café expresso com mais leite...", "en": "An espresso with more milk..." }, "quantidade_ml_base": 50, "composicao": { "cafe": 60, "leite": 40 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escuro", "nome_a_pedir": "escuro", "label": { "pt": "escuro", "en": "dark" }, "nome_dinamico": "Garoto Escuro", "en_translation": { "text": "dark", "type": "adjective" } }, { "id": "claro", "nome_a_pedir": "claro", "label": { "pt": "claro", "en": "light" }, "nome_dinamico": "Garoto Claro", "en_translation": { "text": "light", "type": "adjective" } } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Chávena", "en": "Cup Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": { "text": "in a cold cup", "type": "phrase" } }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Escaldada", "en": "Heated" }, "en_translation": { "text": "in a heated cup", "type": "phrase" } } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
-        { "id": "duplo", "nome_base": "Café Duplo", "en_name": "Double Espresso", "descricao_base": { "pt": "Dois expressos numa chávena grande...", "en": "Two espresso shots in a large cup..." }, "quantidade_ml_base": 60, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "temperatura_chavena", "legenda": { "pt": "Chávena", "en": "Cup Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": { "text": "in a cold cup", "type": "phrase" } }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Escaldada", "en": "Heated" }, "en_translation": { "text": "in a heated cup", "type": "phrase" } } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
-        { "id": "abatanado", "nome_base": "Abatanado", "en_name": "Americano", "descricao_base": { "pt": "Um expresso diluído com água quente...", "en": "An espresso diluted with hot water..." }, "quantidade_ml_base": 150, "composicao": { "cafe": 30, "agua": 70 }, "modificadores": [ { "id": "tamanho", "legenda": { "pt": "Tamanho", "en": "Size" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "cheio", "nome_a_pedir": "cheio", "label": { "pt": "cheio", "en": "long" }, "nome_dinamico": "Abatanado Cheio", "en_translation": { "text": "long", "type": "adjective" } } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
-        { "id": "meia-leite", "nome_base": "Meia de Leite", "en_name": "Latte / Flat White", "descricao_base": { "pt": "Partes iguais de café e leite...", "en": "Equal parts coffee and milk..." }, "quantidade_ml_base": 180, "composicao": { "cafe": 50, "leite": 50 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escura", "nome_a_pedir": "escura", "label": { "pt": "escura", "en": "dark" }, "nome_dinamico": "Meia de Leite Escura", "en_translation": { "text": "dark", "type": "adjective" } }, { "id": "clara", "nome_a_pedir": "clara", "label": { "pt": "clara", "en": "light" }, "nome_dinamico": "Meia de Leite Clara", "en_translation": { "text": "light", "type": "adjective" } } ] }, { "id": "temperatura_chavena", "legenda": { "pt": "Chávena", "en": "Cup Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": { "text": "in a cold cup", "type": "phrase" } }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Escaldada", "en": "Heated" }, "en_translation": { "text": "in a heated cup", "type": "phrase" } } ] }, { "id": "descafeinado_genero", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinada", "nome_a_pedir": "descafeinada", "label": { "pt": "Descafeinada", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
-        { "id": "galao", "nome_base": "Galão", "en_name": "Tall Latte in a Glass", "descricao_base": { "pt": "Servido em copo de vidro alto...", "en": "Served in a tall glass..." }, "quantidade_ml_base": 250, "composicao": { "cafe": 25, "leite": 75 }, "modificadores": [ { "id": "intensidade", "legenda": { "pt": "Intensidade", "en": "Intensity" }, "control_type": "exclusive-checkbox", "modificadores": [ { "id": "escuro", "nome_a_pedir": "escuro", "label": { "pt": "escuro", "en": "dark" }, "nome_dinamico": "Galão Escuro", "en_translation": { "text": "dark", "type": "adjective" } }, { "id": "claro", "nome_a_pedir": "claro", "label": { "pt": "claro", "en": "light" }, "nome_dinamico": "Galão Claro", "en_translation": { "text": "light", "type": "adjective" } } ] }, { "id": "descafeinado_geral", "legenda": { "pt": "Cafeína", "en": "Caffeine" }, "control_type": "toggle", "modificadores": [ { "id": "descafeinado", "nome_a_pedir": "descafeinado", "label": { "pt": "Descafeinado", "en": "Decaf" }, "en_translation": { "text": "decaf", "type": "adjective" } } ] } ] },
-        { "id": "cheirinho", "nome_base": "Café com Cheirinho", "en_name": "Espresso with Brandy", "descricao_base": { "pt": "Um café expresso com um toque de aguardente...", "en": "An espresso with a splash of local brandy..." }, "quantidade_ml_base": 40, "composicao": { "cafe": 80, "alcool": 20 }, "modificadores": [] },
-        { "id": "carioca", "nome_base": "Carioca de Café", "en_name": "Weak Espresso", "descricao_base": { "pt": "Um café fraco, extraído com borras já usadas.", "en": "A weak coffee, brewed from already used grounds." }, "quantidade_ml_base": 30, "composicao": { "cafe": 100 }, "modificadores": [ { "id": "temperatura_chavena", "legenda": { "pt": "Chávena", "en": "Cup Temperature" }, "control_type": "segmented", "default": "normal", "modificadores": [ { "id": "fria", "nome_a_pedir": "em chávena fria", "label": { "pt": "Fria", "en": "Cold" }, "en_translation": { "text": "in a cold cup", "type": "phrase" } }, { "id": "normal", "nome_a_pedir": "", "label": { "pt": "Normal", "en": "Normal" } }, { "id": "escaldada", "nome_a_pedir": "em chávena escaldada", "label": { "pt": "Escaldada", "en": "Heated" }, "en_translation": { "text": "in a heated cup", "type": "phrase" } } ] } ] },
-        { "id": "mazagran", "nome_base": "Mazagran", "en_name": "Iced Coffee with Lemon", "descricao_base": { "pt": "Bebida de café fria com gelo, açúcar e limão.", "en": "A cold coffee drink with ice, sugar, and lemon." }, "quantidade_ml_base": 200, "composicao": { "cafe": 40, "agua": 20, "gelo": 40 }, "modificadores": [] }
-      ]
-    };
-    
-    let currentLanguage = 'pt';
+    <div class="floating-nav">
+        <button type="button" class="floating-btn" id="random-coffee-btn" title="Random Coffee">
+            <i class="fas fa-dice"></i>
+        </button>
+        <button type="button" class="floating-btn" id="favorites-btn" title="Toggle Favorites">
+            <i class="fas fa-heart"></i>
+        </button>
+        <button type="button" class="floating-btn" id="back-to-top-btn" title="Back to Top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const langToggle = document.getElementById('lang-toggle-checkbox');
-        const topButton = document.getElementById('back-to-top-btn');
-        langToggle.addEventListener('change', toggleLanguage);
-        topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-        window.onscroll = () => {
-            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-                topButton.style.display = "block";
-            } else {
-                topButton.style.display = "none";
-            }
-        };
-        renderAllCards();
-    });
-    
-    function getText(key) { return uiStrings[key][currentLanguage]; }
-    function toggleLanguage() {
-        const isEnglish = document.getElementById('lang-toggle-checkbox').checked;
-        currentLanguage = isEnglish ? 'en' : 'pt';
-        renderAllCards();
-    }
-    
-    function updateStaticText() {
-        document.querySelectorAll('[data-lang-key]').forEach(el => {
-            el.textContent = getText(el.dataset.langKey);
-        });
-        const langToggle = document.querySelector('.lang-toggle');
-        langToggle.querySelector('.lang-label-pt').classList.toggle('active', currentLanguage === 'pt');
-        langToggle.querySelector('.lang-label-pt').classList.toggle('inactive', currentLanguage !== 'pt');
-        langToggle.querySelector('.lang-label-en').classList.toggle('active', currentLanguage === 'en');
-        langToggle.querySelector('.lang-label-en').classList.toggle('inactive', currentLanguage !== 'en');
-        document.getElementById('lang-toggle-checkbox').checked = (currentLanguage === 'en');
-    }
-    
-    function renderAllCards() {
-        const container = document.getElementById('guia-cafe-container');
-        container.innerHTML = '';
-        coffeeData.tipos_cafe.forEach(cafe => {
-            const cartao = document.createElement('article');
-            cartao.className = 'cartao-cafe';
-            cartao.dataset.cafeId = cafe.id;
-            cartao.innerHTML = generateCardHTML(cafe);
-            container.appendChild(cartao);
-            cartao.querySelectorAll('input').forEach(input => {
-                input.addEventListener('change', (e) => handleInteraction(e, cafe.id));
-            });
-            updateCard(cafe.id);
-        });
-        updateStaticText();
-    }
-
-    function generateCardHTML(cafe) {
-        const enSubtitle = currentLanguage === 'en' ? `<p class="english-subtitle">${cafe.en_name}</p>` : '';
-        const modificadoresHtml = cafe.modificadores.map(grupo => {
-            const legendText = grupo.legenda[currentLanguage];
-            let controlHtml;
-            switch (grupo.control_type) {
-                case 'exclusive-checkbox':
-                    controlHtml = `<div class="modificador-botoes">${grupo.modificadores.map(mod => `<label><input type="checkbox" name="${cafe.id}-${grupo.id}" value="${mod.id}"><span>${mod.label[currentLanguage]}</span></label>`).join('')}</div>`;
-                    break;
-                case 'toggle':
-                    controlHtml = `<label class="toggle-switch"><span class="label-text">${grupo.modificadores[0].label[currentLanguage]}</span><input type="checkbox" name="${cafe.id}-${grupo.id}" value="${grupo.modificadores[0].id}"><span class="slider"></span></label>`;
-                    break;
-                case 'segmented':
-                    controlHtml = `<div class="segmented-control">${grupo.modificadores.map(mod => `<label><input type="radio" name="${cafe.id}-${grupo.id}" value="${mod.id}" ${mod.id === grupo.default ? 'checked' : ''}><span>${mod.label[currentLanguage]}</span></label>`).join('')}</div>`;
-                    break;
-            }
-            return `<div class="grupo-modificador"><legend>${legendText}</legend>${controlHtml}</div>`;
-        }).join('');
-
-        return `
-            <div class="cartao-header">
-                <div class="cartao-info">
-                    <h3>${cafe.nome_base}</h3>
-                    ${enSubtitle}
-                    <p class="descricao-base">${cafe.descricao_base[currentLanguage]}</p>
-                </div>
-                <div class="volume-display">
-                    <div class="volume-bar-container"><div class="volume-bar-fill"></div></div>
-                    <span class="volume-texto"></span>
-                </div>
-            </div>
-            <div class="composicao-container"></div>
-            ${cafe.modificadores.length > 0 ? `<div class="modificadores-container">${modificadoresHtml}</div>` : ''}
-            <div class="resultado-pedido">
-                <div class="como-pedir-label"></div>
-                <div class="como-pedir-phrase"><span></span></div>
-                <div class="como-pedir-translation"></div>
-            </div>
-        `;
-    }
-
-    function handleInteraction(event, cafeId) {
-        const input = event.target;
-        const cafe = coffeeData.tipos_cafe.find(c => c.id === cafeId);
-        const grupo = cafe.modificadores.find(g => input.name.endsWith(g.id));
-        if (grupo && grupo.control_type === 'exclusive-checkbox' && input.checked) {
-            grupo.modificadores.forEach(mod => {
-                if (mod.id !== input.value) {
-                    const otherInput = document.querySelector(`input[name="${input.name}"][value="${mod.id}"]`);
-                    if (otherInput) otherInput.checked = false;
-                }
-            });
-        }
-        updateCard(cafeId);
-    }
-    
-    function getArticle(word) {
-        if (!word) return 'a';
-        const firstWord = word.trim().split(' ')[0].toLowerCase();
-        return ['a', 'e', 'i', 'o', 'u'].includes(firstWord[0]) ? 'an' : 'a';
-    }
-
-    function updateCard(cafeId) {
-        const cartao = document.querySelector(`.cartao-cafe[data-cafe-id="${cafeId}"]`);
-        const cafe = coffeeData.tipos_cafe.find(c => c.id === cafeId);
-        if (!cartao || !cafe) return;
-        
-        const selectedModifierObjects = [];
-        cafe.modificadores.forEach(grupo => {
-            const inputs = cartao.querySelectorAll(`input[name="${cafe.id}-${grupo.id}"]:checked`);
-            inputs.forEach(input => {
-                const mod = grupo.modificadores.find(m => m.id === input.value);
-                if (mod) selectedModifierObjects.push(mod);
-            });
-        });
-        
-        const ordemPt = ['curto', 'cheio', 'escuro', 'escura', 'claro', 'clara', 'descafeinado', 'descafeinada', 'em chávena fria', 'em chávena escaldada'];
-        selectedModifierObjects.sort((a, b) => ordemPt.indexOf(a.nome_a_pedir) - ordemPt.indexOf(b.nome_a_pedir));
-        
-        const finalMl = cafe.quantidade_ml_base + selectedModifierObjects.reduce((acc, mod) => acc + (mod.modifica_ml || 0), 0);
-        const baseFeminina = cafe.id === 'meia-leite';
-        const pedidoBase = baseFeminina ? "Uma meia de leite" : `Um ${cafe.nome_base.toLowerCase()}`;
-        const pedidoModifiers = selectedModifierObjects.map(m => m.nome_a_pedir).filter(Boolean).join(' ');
-        const pedidoFinalString = `${pedidoBase} ${pedidoModifiers}`.trim();
-
-        const primaryMod = selectedModifierObjects.find(mod => mod.nome_dinamico);
-        let finalTitle = primaryMod ? primaryMod.nome_dinamico : cafe.nome_base;
-        const secondaryModifiersText = selectedModifierObjects.filter(mod => !mod.nome_dinamico && mod.nome_a_pedir).map(mod => mod.nome_a_pedir).join(' ');
-        if (secondaryModifiersText) finalTitle += ' ' + secondaryModifiersText;
-
-        cartao.querySelector(`h3`).textContent = finalTitle.trim();
-        cartao.querySelector('.como-pedir-phrase span').textContent = `"${pedidoFinalString}, se faz favor."`;
-
-        const translationEl = cartao.querySelector('.como-pedir-translation');
-        if (currentLanguage === 'en') {
-            const englishAdjectives = selectedModifierObjects.map(m => m.en_translation).filter(t => t && t.type === 'adjective').map(t => t.text).join(' ');
-            const englishPhrases = selectedModifierObjects.map(m => m.en_translation).filter(t => t && t.type === 'phrase').map(t => t.text).join(' ');
-            const article = getArticle(englishAdjectives || cafe.en_name);
-            
-            const finalEnglish = [article, englishAdjectives, cafe.en_name, englishPhrases].filter(Boolean).join(' ');
-            translationEl.textContent = `(${uiStrings.translation_means[currentLanguage]} "${finalEnglish.replace(/\s+/g, ' ')}, please.")`;
-            translationEl.style.display = 'block';
-        } else {
-            translationEl.textContent = '';
-            translationEl.style.display = 'none';
-        }
-        
-        const maxMl = 280;
-        const alturaPercentagem = (finalMl / maxMl) * 100;
-        cartao.querySelector('.volume-bar-fill').style.height = `${Math.min(alturaPercentagem, 100)}%`;
-        cartao.querySelector('.volume-texto').textContent = `${finalMl}ml`;
-        
-        const composicaoContainer = cartao.querySelector('.composicao-container');
-        let barraHtml = '<div class="composicao-barra">';
-        const compLabels = uiStrings.composition_labels[currentLanguage];
-        if (cafe.composicao.cafe) barraHtml += `<span class="comp-cafe" style="width: ${cafe.composicao.cafe}%">${compLabels.cafe}</span>`;
-        if (cafe.composicao.leite) barraHtml += `<span class="comp-leite" style="width: ${cafe.composicao.leite}%">${compLabels.leite}</span>`;
-        if (cafe.composicao.agua) barraHtml += `<span class="comp-agua" style="width: ${cafe.composicao.agua}%">${compLabels.agua}</span>`;
-        if (cafe.composicao.alcool) barraHtml += `<span class="comp-alcool" style="width: ${cafe.composicao.alcool}%">${compLabels.alcool}</span>`;
-        if (cafe.composicao.gelo) barraHtml += `<span class="comp-gelo" style="width: ${cafe.composicao.gelo}%">${compLabels.gelo}</span>`;
-        barraHtml += '</div>';
-        composicaoContainer.innerHTML = barraHtml;
-        
-        cartao.querySelector('.como-pedir-label').textContent = getText('how_to_ask');
-    }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
