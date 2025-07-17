@@ -388,4 +388,5 @@ header p {
 }
 #back-to-top-btn { display: flex; }
 #favorites-btn { display: flex; }
+#install-app-btn { display: none; }
 #random-coffee-btn { display: none; }
