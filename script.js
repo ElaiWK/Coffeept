@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     document.getElementById('favorites-btn').addEventListener('click', toggleFavoritesView);
-    document.getElementById('random-coffee-btn').addEventListener('click', showRandomCoffee);
     
     window.addEventListener('scroll', () => {
         if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
@@ -157,7 +156,12 @@ function generateCardHTML(cafe) {
     return `
         <div class="cartao-header">
             <div class="cartao-info">
-                <h3>${cafe.nome_base}</h3>
+                <div class="cartao-title-container">
+                    <h3>${cafe.nome_base}</h3>
+                    <button type="button" class="favorite-btn" title="${isFavorite ? getText('remove_from_favorites') : getText('add_to_favorites')}">
+                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                    </button>
+                </div>
                 ${enSubtitle}
                 <p class="descricao-base">${cafe.descricao_base[currentLanguage]}</p>
             </div>
@@ -165,9 +169,6 @@ function generateCardHTML(cafe) {
                 <div class="volume-bar-container"><div class="volume-bar-fill"></div></div>
                 <span class="volume-texto"></span>
             </div>
-            <button type="button" class="favorite-btn floating-btn" style="position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; font-size: 14px;" title="${isFavorite ? getText('remove_from_favorites') : getText('add_to_favorites')}">
-                <i class="fas fa-heart${isFavorite ? '' : '-o'}"></i>
-            </button>
         </div>
         <div class="composicao-container"></div>
         ${cafe.modificadores.length > 0 ? `<div class="modificadores-container">${modificadoresHtml}</div>` : ''}
@@ -282,10 +283,11 @@ function toggleFavorite(cafeId) {
 
 function updateFavoriteButton(cafeId) {
     const cartao = document.querySelector(`.cartao-cafe[data-cafe-id="${cafeId}"]`);
+    if (!cartao) return;
     const favoriteBtn = cartao.querySelector('.favorite-btn');
     const isFavorite = favorites.includes(cafeId);
     
-    favoriteBtn.innerHTML = `<i class="fas fa-heart${isFavorite ? '' : '-o'}"></i>`;
+    favoriteBtn.querySelector('i').className = `${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart`;
     favoriteBtn.title = isFavorite ? getText('remove_from_favorites') : getText('add_to_favorites');
 }
 
@@ -314,10 +316,20 @@ function handleSearch(event) {
 }
 
 function handleFilter(event) {
+    const clickedButton = event.target.closest('.filter-btn');
+    if (!clickedButton) return;
+
+    const filter = clickedButton.dataset.filter;
+
+    if (clickedButton.classList.contains('active') && filter === 'favorites') {
+        document.querySelector('[data-filter="all"]').click();
+        return;
+    }
+
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.closest('.filter-btn').classList.add('active');
+    clickedButton.classList.add('active');
     
-    currentFilter = event.target.closest('.filter-btn').dataset.filter;
+    currentFilter = clickedButton.dataset.filter;
     const query = document.getElementById('coffee-search').value.toLowerCase();
     filterCoffees(query, currentFilter);
 }
@@ -359,20 +371,11 @@ function filterCoffees(searchQuery, filter) {
 
 function toggleFavoritesView() {
     const favoritesFilter = document.querySelector('[data-filter="favorites"]');
-    if (favoritesFilter && favorites.length > 0) {
-        favoritesFilter.click();
-    }
-}
+    if (!favoritesFilter || favorites.length === 0) return;
 
-function showRandomCoffee() {
-    const randomCafe = coffeeData.tipos_cafe[Math.floor(Math.random() * coffeeData.tipos_cafe.length)];
-    const randomCard = document.querySelector(`.cartao-cafe[data-cafe-id="${randomCafe.id}"]`);
-    
-    if (randomCard) {
-        randomCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        randomCard.classList.add('animate-pulse');
-        setTimeout(() => {
-            randomCard.classList.remove('animate-pulse');
-        }, 2000);
+    if (currentFilter === 'favorites') {
+        document.querySelector('[data-filter="all"]').click();
+    } else {
+        favoritesFilter.click();
     }
 }

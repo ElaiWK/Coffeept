@@ -1,0 +1,21 @@
+{
+  "name": "Portuguese Coffee Guide",
+  "short_name": "Café PT",
+  "description": "Interactive guide to Portuguese coffee culture.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f4f1ed",
+  "theme_color": "#5a3a2a",
+  "icons": [
+    {
+      "src": "images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 

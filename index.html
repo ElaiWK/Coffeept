@@ -8,10 +8,11 @@
     <meta name="keywords" content="Portuguese coffee, galão, café, pingado, Portugal, coffee culture">
     <meta name="author" content="Portuguese Coffee Guide">
     <meta name="theme-color" content="#5a3a2a">
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUG9ydHVndWVzZSBDb2ZmZWUgR3VpZGUiLCJzaG9ydF9uYW1lIjoiQ2Fmw6kgUFQiLCJkZXNjcmlwdGlvbiI6IkludGVyYWN0aXZlIGd1aWRlIHRvIFBvcnR1Z3Vlc2UgY29mZmVlIGN1bHR1cmUiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y0ZjFlZCIsInRoZW1lX2NvbG9yIjoiIzVhM2EyYSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNjc3ZnJTIweG1sbnMlM2QnaHR0cCUzYS8vd3d3LnczLm9yZy8yMDAwL3N2ZyclMjAlMjB2aWV3Qm94JTNkJzAlMjAwJTIwMTAwJTIwMTAwJyUzZSUzY3RleHQlMjB5JTNkJy45ZW0nJTIwZm9udC1zaXplJTNkJzIwJyUzZSVmMCU5ZiU4ZCVhNSUzYy90ZXh0JTNlJTNjL3N2ZyUzZSIsInNpemVzIjoiMjR4MjQiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Café PT">
+    <link rel="apple-touch-icon" href="images/icon-192x192.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,9 +61,6 @@
     </div>
     
     <div class="floating-nav">
-        <button type="button" class="floating-btn" id="random-coffee-btn" title="Random Coffee">
-            <i class="fas fa-dice"></i>
-        </button>
         <button type="button" class="floating-btn" id="favorites-btn" title="Toggle Favorites">
             <i class="fas fa-heart"></i>
         </button>
@@ -72,5 +70,16 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
