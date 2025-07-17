@@ -159,7 +159,7 @@ function generateCardHTML(cafe) {
                 <div class="cartao-title-container">
                     <h3>${cafe.nome_base}</h3>
                     <button type="button" class="favorite-btn" title="${isFavorite ? getText('remove_from_favorites') : getText('add_to_favorites')}">
-                        <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                        <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                     </button>
                 </div>
                 ${enSubtitle}
@@ -287,7 +287,7 @@ function updateFavoriteButton(cafeId) {
     const favoriteBtn = cartao.querySelector('.favorite-btn');
     const isFavorite = favorites.includes(cafeId);
     
-    favoriteBtn.querySelector('i').className = `${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart`;
+    favoriteBtn.querySelector('i').className = `${isFavorite ? 'fas' : 'far'} fa-heart`;
     favoriteBtn.title = isFavorite ? getText('remove_from_favorites') : getText('add_to_favorites');
 }
 
@@ -297,10 +297,10 @@ function updateFavoritesButton() {
     const count = favorites.length;
     
     if (count > 0) {
-        favoritesBtn.innerHTML = `<i class="fa-solid fa-heart"></i><span style="position: absolute; top: -5px; right: -5px; background: #ff4757; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center;">${count}</span>`;
+        favoritesBtn.innerHTML = `<i class="fas fa-heart"></i><span style="position: absolute; top: -5px; right: -5px; background: #ff4757; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center;">${count}</span>`;
         favoritesFilter.style.display = 'flex';
     } else {
-        favoritesBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+        favoritesBtn.innerHTML = '<i class="far fa-heart"></i>';
         favoritesFilter.style.display = 'none';
         if (currentFilter === 'favorites') {
             currentFilter = 'all';
