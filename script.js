@@ -38,14 +38,12 @@ let currentLanguage = 'pt';
 let favorites = JSON.parse(localStorage.getItem('coffee-favorites') || '[]');
 let currentFilter = 'all';
 let allCoffeeCards = [];
-let deferredPrompt;
 
 document.addEventListener('DOMContentLoaded', () => {
     const langToggle = document.getElementById('lang-toggle-checkbox');
     const floatingNav = document.querySelector('.floating-nav');
     const searchInput = document.getElementById('coffee-search');
     const filterButtons = document.querySelectorAll('.filter-btn');
-    const installBtn = document.getElementById('install-app-btn');
     
     langToggle.addEventListener('change', toggleLanguage);
     searchInput.addEventListener('input', handleSearch);
@@ -66,36 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             floatingNav.classList.remove('show');
         }
-    });
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) {
-            installBtn.style.display = 'flex';
-        }
-    });
-
-    if (installBtn) {
-        installBtn.addEventListener('click', (e) => {
-            installBtn.style.display = 'none';
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the A2HS prompt');
-                } else {
-                    console.log('User dismissed the A2HS prompt');
-                }
-                deferredPrompt = null;
-            });
-        });
-    }
-
-    window.addEventListener('appinstalled', (evt) => {
-      console.log('INSTALL: Success');
-      if (installBtn) {
-        installBtn.style.display = 'none';
-      }
     });
     
     renderAllCards();
