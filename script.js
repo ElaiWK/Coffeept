@@ -297,10 +297,10 @@ function updateFavoritesButton() {
     const count = favorites.length;
     
     if (count > 0) {
-        favoritesBtn.innerHTML = `<i class="fas fa-heart"></i><span style="position: absolute; top: -5px; right: -5px; background: #ff4757; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center;">${count}</span>`;
+        favoritesBtn.innerHTML = `<i class="fa-solid fa-heart"></i><span style="position: absolute; top: -5px; right: -5px; background: #ff4757; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center;">${count}</span>`;
         favoritesFilter.style.display = 'flex';
     } else {
-        favoritesBtn.innerHTML = '<i class="fas fa-heart-o"></i>';
+        favoritesBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
         favoritesFilter.style.display = 'none';
         if (currentFilter === 'favorites') {
             currentFilter = 'all';
